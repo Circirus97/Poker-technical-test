@@ -1,0 +1,789 @@
+{
+	"info": {
+		"_postman_id": "f1cd22b5-55d1-4ec2-b5cb-f5b6ae4e2b12",
+		"name": "PokerTestOnBoard - v1.0",
+		"description": "# PokerTexasHolderOnboardTest\n\n# Ejercicio Texas Holdem\n\nEl ejercicio consiste en crear un webservice que resuelva el problema segun las instrucciones dadas.\n\n## Descripción del problema\nTu trabajo es comparar pares de manos de póquer e indicar cuál es el ganador, con que tipo de mano ganó y cuáles fueron las cartas que lo hicieron ganar.\n\nEjemplos:\n\nGanó la primera mano, con carta más alta, la carta fue el As .\nGanó la segunda mano, con par, la carta fue el rey.\n\nNota: el texto solo es explicativo, debe entregar el resultado en un objeto que se evalúa al correr los test.\n\nDebe tener en cuenta que solo debe implementar 5 de los 10 tipos de manos pero en el orden normal, por ejemplo: Escalera real, Escalera de color, Poker, Full House y Color\n\n## Descripción de las reglas de poker\n\nUna baraja de póquer contiene 52 cartas; cada carta tiene un palo que es uno de los tréboles, diamantes, corazones o espadas (indicados con C , D, H y S respectivamente). Cada tarjeta también tiene un valor que es uno de 2, 3, 4, 5, 6, 7, 8, 9, 10, jota, reina, rey, as (denotado 2, 3, 4, 5, 6, 7, 8 , 9, 10, J, Q, K, A). Para fines de puntuación, los trajes no están ordenados, mientras que los valores se ordenan como se indicó anteriormente, siendo 2 el valor más bajo y el más alto el as.\n\nUna mano de poker consiste en 5 cartas repartidas desde el mazo. Las manos de póquer se clasifican según el siguiente orden parcial de menor a mayor.\n\n- Carta alta: Las manos que no encajan en ninguna categoría superior se clasifican según el valor de su carta más alta. Si las cartas más altas tienen el mismo valor, las manos se clasifican por la siguiente más alta, y así sucesivamente.\n\n- Par: 2 de las 5 cartas en la mano tienen el mismo valor. Las manos que contienen un par se clasifican según el valor de las cartas que forman el par. Si estos valores son los mismos, las manos se clasifican según los valores de las cartas que no forman el par, en orden decreciente.\n- Dos pares: La mano contiene 2 pares diferentes. Las manos que contienen 2 pares se clasifican por el valor de su par más alto. Las manos con el mismo par más alto se clasifican según el valor de su otro par. Si estos valores son los mismos, las manos se clasifican según el valor de la carta restante.\n- Tres de una clase: Tres de las cartas en la mano tienen el mismo valor. Las manos que contienen tres de una clase se clasifican según el valor de las 3 cartas.\n- Escalera: La mano contiene 5 cartas con valores consecutivos. Las manos que contienen una recta se clasifican por su carta más alta.\n- Color: Mano contiene 5 cartas del mismo palo. Las manos que son ambos enrojecimientos se clasifican según las reglas de Carta alta.\n- Full House: 3 cartas del mismo valor, con las 2 cartas restantes formando un par. Clasificado por el valor de las 3 cartas.\n- Poker: 4 cartas con el mismo valor. Clasificado por el valor de las 4 cartas.\n- Escalera de color: 5 cartas del mismo palo con valores consecutivos. Clasificado por la carta más alta de la mano.\n- Escalera real: Cinco cartas del mismo palo del 10 al as.\n\n## Instrucciones\n\nDebe crear una cuenta en github y un repositorio público con el contenido de este proyecto (no un fork), una vez creado debe enviarnos la dirección del repo.\n\nPuede usar cualquier lenguaje de programacion y cualquier framework que desee, lo importante es que el webservice tenga la estructura dada y que pase los test que se encuentran adjuntos a la coleccion de postman.\n\nEstructura de la consulta:\n\n```JSON\n{\n  \"hand1\": {\n    \"type\": \"string\"\n  },\n  \"hand2\": {\n    \"type\": \"string\"\n  }\n}\n```\n\nEstructura de la respuesta\n\n```JSON\n\n{\n\n  \"winnerHand\": {\n    \"type\": \"string\"\n  },\n  \"winnerHandType\": {\n    \"type\": \"string\"\n  },\n  \"compositionWinnerHand\": {\n    \"type\": \"array\"\n  }\n}\n```\n\nEl resultado de la evaluación de las manos de poker debe ser un objeto que contenga cual de las manos fue la ganadora, con que tipo de mano y cuáles fueron las cartas con las que ganó, dicho resultado se debe evaluar mediante test unitarios, no se solicita ni se evalúa interfaz gráfica, solo el informe de los test unitarios.\n\nLos valores para los tests ya fueron descritos en los test de la coleccion, debe crear las clases que representan las entidades del dominio (ejemplo: Carta, Mano, etc) y los métodos para evaluar el problema según se indicó anteriormente.\n\nDebe implementar solo 5 de las 10 validaciones, debe indicar cuáles de las 5 seleccione.\n\nTambién debe implementar los test con los casos mencionados en la descripción según las validaciones que escoja, ya que se evaluará que el test pase.\n\nDebe publicar el servicio en un [Paas](https://en.wikipedia.org/wiki/Platform_as_a_service) que este vinculado con el repositorio del ejercicio resuelto (algo parecido al flujo de trabajo de heroku, por ejemplo puede usar [RailWay](https://railway.app/) o cualquier otro servicio que sea parecido).\n\n## Entregable\n\nUrl de repositorio publico con la solucion del proyecto.\n\nUrl del servicio web funcionando en una plataforma que este vinculado al repositorio.\n\n## Se evaluará:\n\n- Que los webservices funcionen\n\n- Que los webservices pasen los test asociados a los casos que seleccionó.\n\n- Estilo de codificación.\n\n- Diseño de los módulos y las clases.\n\n- Lógica de la implementación.\n\n- Se da un plus si crea test unitarios en el proyecto.\n\n- Se da un plus si implementa más de las 5 validaciones, pero solo si funcionan todas las que implemente.\n\n- Utilizacion de git, como creación de nuevas ramas, utilizar estándar en los mensajes de commit",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13598106"
+	},
+	"item": [
+		{
+			"name": "HighCard",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is HighCard\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"HighCard\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain As\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"As\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 3D 5S 9C KD\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TwoPair",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is TwoPair\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"TwoPair\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain K & 3\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"King\");",
+							"    pm.expect(compositionWinnerHand[1]).to.eql(\"3\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 3D 3S KC KD\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ThreeOfAKind",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is ThreeOfAKind\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"ThreeOfAKind\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain King\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"King\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 3D KS KC KD\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Straight",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is Straight\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"Straight\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain 2\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"2\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 3D 4S 5C 6D\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "OnePair",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is OnePair\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"OnePair\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain King\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"King\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 3D 5S KC KD\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Flush",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is Flush\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"Flush\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain Heart\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"Heart\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 3H 5H KH 8H\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FullHouse",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is FullHouse\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"FullHouse\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain King & 2\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"2\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"King\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 2D KS KC KD\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FourOfAKind (Poker)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is FourOfAKind\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"FourOfAKind\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain 2\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"2\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 2D 2S 2C KD\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "StraightFlush",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is StraightFlush\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"StraightFlush\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain Heart\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"Heart\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"2H 3H 4H 5H 6H\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RoyalFlush",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {",
+							"",
+							"  \"winnerHand\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"winnerHandType\": {",
+							"    \"type\": \"string\"",
+							"  },",
+							"  \"compositionWinnerHand\": {",
+							"    \"type\": \"array\"",
+							"  }",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"pm.test(\"hand1 win\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHand).to.eql(\"hand1\");",
+							"});",
+							"",
+							"pm.test(\"winnerHandType is RoyalFlush\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.winnerHandType).to.eql(\"RoyalFlush\");",
+							"});",
+							"",
+							"pm.test(\"compositionWinnerHand contain Heart\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const compositionWinnerHand = jsonData.compositionWinnerHand;",
+							"    pm.expect(compositionWinnerHand).to.be.an(\"array\");",
+							"    pm.expect(compositionWinnerHand[0]).to.eql(\"Heart\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hand1\": \"10H JH QH KH AH\",\n    \"hand2\": \"2C 3H 4S 8C AH\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/poker/validation",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"poker",
+						"validation"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "endpoint",
+			"value": "http://localhost:8080"
+		}
+	]
+}
