@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8d6a3bec-4a48-4c42-8cf7-4038fa1a2c4e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/Poker-technical-test.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TexasHoldem/src/main/java/com/poker/TexasHoldem/config/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TexasHoldem/src/main/java/com/poker/TexasHoldem/controller/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TexasHoldem/src/main/java/com/poker/TexasHoldem/dto/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TexasHoldem/src/main/java/com/poker/TexasHoldem/model/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TexasHoldem/src/main/java/com/poker/TexasHoldem/usecase/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TexasHoldem/src/main/java/com/poker/TexasHoldem/util/.gitkeep" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TexasHoldem/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/TexasHoldem/pom.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="2kTTZ7obP6jEAb7BY3HKEyXTaCg" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Alejandra/Desktop/Poker-technical-test/TexasHoldem/src/main/java/com/poker/TexasHoldem",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem" />
+      <recent name="C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\dto" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="TexasHoldemApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="TexasHoldem" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.poker.TexasHoldem.TexasHoldemApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8d6a3bec-4a48-4c42-8cf7-4038fa1a2c4e" name="Changes" comment="" />
+      <created>1723306620092</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1723306620092</updated>
+      <workItem from="1723306621290" duration="3491000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
