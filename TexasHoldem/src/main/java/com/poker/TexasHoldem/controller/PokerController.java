@@ -9,18 +9,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(path = "/poker")
 @AllArgsConstructor
 public class PokerController {
 
-    //private PokerService pokerService;
+    private PokerUserCase pokerUserCase;
 
     @PostMapping
     public PokerHandResponse createHands(@RequestBody PokerHandRequest cards){
-        return pokerService.createHand(cards);
+        return pokerUserCase.createHand(cards);
     }
 
 
