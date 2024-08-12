@@ -2,22 +2,28 @@ package com.poker.TexasHoldem.usecase;
 
 import com.poker.TexasHoldem.dto.request.PokerHandRequest;
 import com.poker.TexasHoldem.dto.response.PokerHandResponse;
+import com.poker.TexasHoldem.model.WinningResult;
+import lombok.val;
+import org.apache.logging.log4j.util.Strings;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
+
+import static org.apache.logging.log4j.util.Strings.isEmpty;
+
 
 public class PokerUserCase {
 
     private static final String HAND_REGEX = "^([2-9]|10|A|J|Q|K)[CHSD]( ([2-9]|10|A|J|Q|K)[CHSD]){4}$";
+    public static final String HAND_ONE = "hand1";
+    public static final String HAND_TWO = "hand2";
 
-    public PokerHandResponse createHands(PokerHandRequest request){
+    public PokerHandResponse createHands(PokerHandRequest request) {
 
         return null;
     }
 
-    public Boolean validateHand(String hand){
-
+    public Boolean validateHand(String hand) {
         return Pattern.matches(HAND_REGEX, hand);
     }
 
@@ -50,6 +56,7 @@ public class PokerUserCase {
             default -> 0;
         };
     }
+
     public int getSuitValue(char suit) {
         return switch (suit) {
             case 'S' -> 4;
@@ -66,40 +73,30 @@ public class PokerUserCase {
     ----------------------------
      */
 
-    public String winnerHighCard(String hand1, String hand2) {
+    public String winnerHighCard(String handOne, String handTwo) {
 
-        String highestCardHand1 = getHighestCard(hand1);
-        String highestCardHand2 = getHighestCard(hand2);
+        val highestCardHandOne = getHighestCard(handOne);
+        val highestCardHandTwo = getHighestCard(handTwo);
 
-        Integer value1 = getCardValue(highestCardHand1);
-        Integer value2 = getCardValue(highestCardHand2);
-
-        if (value1 > value2) {
-            return "hand1";
-        } else if (value1 < value2) {
-            return "hand2";
+        if (getCardValue(highestCardHandOne.getValueHighCard()) > getCardValue(highestCardHandTwo.getValueHighCard())) {
+            return HAND_ONE;
         } else {
-            return "draw";
+            return HAND_TWO;
         }
     }
 
 
-    public List<String> findToCard(String hand) {
+    public List<String> separateCards(String hand) {
         String[] cards = hand.split(" ");
-        List<String> cardList = new ArrayList<>();
 
-        for (String card : cards) {
-            cardList.add(card);
-        }
-
-        return cardList;
-
+        return new ArrayList<>(Arrays.asList(cards));
     }
 
 
-    public String getHighestCard(String hand) {
-        List<String> cards = findToCard(hand);
-        String highestCard = cards.get(0);
+    public WinningResult getHighestCard(String hand) {
+
+        List<String> cards = separateCards(hand);
+        String highestCard = cards.getFirst();
 
         for (String card : cards) {
             Integer currentRankValue = getCardValue(extractRank(card));
@@ -116,42 +113,81 @@ public class PokerUserCase {
                 }
             }
         }
-        return highestCard;
+        return WinningResult.builder()
+                .highCard(Boolean.TRUE)
+                .valueHighCard(highestCard)
+                .build();
     }
 
     /*
     ----------------------------
-      ONE PAIR
+     PAIR OR TWO PAIR
     ----------------------------
      */
 
-    public String getOnePair(String hand) {
-        String[] cards = hand.split(" ");
-        String highestCard = cards[0];
+    public WinningResult getPairOrTwoPair(String hand, WinningResult winningResult) {
+        List<String> cards = separateCards(hand);
+        Map<String, Integer> rankCount = new HashMap<>();
+        String pair = Strings.EMPTY;
+        String twoPair = Strings.EMPTY;
 
+        // Contar las apariciones de cada rango
+        for (String card : cards) {
+            String rank = extractRank(card);
+            rankCount.put(rank, rankCount.getOrDefault(rank, 0) + 1);
+        }
 
-        return highestCard;
+        // Identificar pares
+        for (String card : cards.stream().map(s -> s.length() == 3 ? s.substring(0, 2) : s.substring(0, 1)).distinct().toList()) {
+            String rank = extractRank(card);
+            if (rankCount.get(rank) == 2) {
+                if (pair.isEmpty()) {
+                    pair = card;
+                } else if (!twoPair.equals(card)) {
+                    twoPair = card;
+                    break; // Para de buscar si se encuentra un segundo par
+                }
+            }
+        }
+
+        return winningResult.toBuilder()
+                .twoPair(!isEmpty(twoPair))
+                .valueTwoPair(isEmpty(twoPair) ? Strings.EMPTY : String.format("%s,%s", twoPair, pair))
+                .pair(!isEmpty(pair))
+                .valuePair(isEmpty(pair) ? Strings.EMPTY : pair)
+                .build();
     }
-
-
-
-
-
-
-
-
-
-    /*
-    ----------------------------
-      TWO PAIR
-    ----------------------------
-     */
 
     /*
     ----------------------------
       THREE OF A KIND
     ----------------------------
      */
+
+    public WinningResult validateThreeCardsEquals(String hand, WinningResult winningResult) {
+
+        List<String> cards = separateCards(hand);
+        Map<String, Integer> rankCount = new HashMap<>();
+
+        // Contar las apariciones de cada rango
+        for (String card : cards) {
+            String rank = extractRank(card);
+            rankCount.put(rank, rankCount.getOrDefault(rank, 0) + 1);
+        }
+
+        // Verificar si hay 3 cartas con el mismo rango y devolver el rango
+        for (Map.Entry<String, Integer> entry : rankCount.entrySet()) {
+            if (entry.getValue() == 3) {
+                return winningResult.toBuilder()
+                        .threeOfAKind(Boolean.TRUE)
+                        .valueThreeOfAKind(entry.getKey())
+                        .build();
+            }
+        }
+
+        return winningResult;
+
+    }
 
     /*
     ----------------------------
@@ -192,8 +228,6 @@ public class PokerUserCase {
       ROYAL FLUSH
     ----------------------------
      */
-
-
 
 
 }
