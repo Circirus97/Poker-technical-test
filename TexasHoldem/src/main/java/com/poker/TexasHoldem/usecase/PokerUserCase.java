@@ -239,41 +239,6 @@ public class PokerUserCase {
     ----------------------------
      */
 
-    /*public WinningResult validateStraight(String hand, WinningResult winningResult) {
-        // Separar las cartas de la mano
-        List<String> cards = separateCards(hand);
-
-        // Obtener los valores numéricos de las cartas
-        List<Integer> cardValues = cards.stream()
-                .map(card -> getCardValue(extractRank(card)))
-                .distinct()  // Eliminar duplicados
-                .sorted()    // Ordenar de menor a mayor
-                .toList();
-
-        // Verificar si las cartas forman una secuencia consecutiva
-        boolean isStraight = true;
-        for (int i = 1; i < cardValues.size(); i++) {
-            if (cardValues.get(i) != cardValues.get(i - 1) + 1) {
-                isStraight = false;
-                break;
-            }
-        }
-
-        // Caso especial: A-2-3-4-5 también es un Straight (considerando que A es 14)
-        if (!isStraight && cardValues.contains(14)) {
-            isStraight = cardValues.get(0) == 2 && cardValues.get(1) == 3
-                    && cardValues.get(2) == 4 && cardValues.get(3) == 5;
-        }
-
-        // Devolver el resultado
-        return isStraight
-                ? winningResult.toBuilder()
-                .straight(Boolean.TRUE)
-                .valueStraight(hand)
-                .build()
-                : winningResult;
-    }*/
-
     public WinningResult validateStraight(String hand, WinningResult winningResult) {
         // Separar las cartas de la mano
         List<String> cards = separateCards(hand);
