@@ -1,6 +1,9 @@
 package com.poker.TexasHoldem.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder(toBuilder = true)
 @Data
@@ -37,4 +40,6 @@ public class WinningResult {
 
     private Boolean royalFlush;
     private String valueRoyalFlush;
+
+    private Integer valueWinning;
 }

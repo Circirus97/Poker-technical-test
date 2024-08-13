@@ -31,17 +31,24 @@ class PokerUserCaseTest {
     }
 
     @Test
-    void getPair() {
+    void winnerHighCard() {
+        val highestCard = pokerUserCase.winnerHighCard(hand, handTwo);
+        assertEquals("hand2", highestCard);
+    }
 
-        val value = pokerUserCase.getPairOrTwoPair(hand, WinningResult.builder().build());
-        assertEquals(result, value);
+    @Test
+    void getHighestCard() {
+        val highestCardHandOne = pokerUserCase.validateHighestCard(hand);
+        assertEquals("5S", highestCardHandOne.getValueHighCard());
 
     }
 
     @Test
-    void winnerHighCard() {
-        val highestCard = pokerUserCase.winnerHighCard(hand, handTwo);
-        assertEquals("hand2", highestCard);
+    void getPair() {
+
+        val value = pokerUserCase.validatePairOrTwoPair(hand, WinningResult.builder().build());
+        assertEquals(result, value);
+
     }
 
     @Test
@@ -55,5 +62,59 @@ class PokerUserCaseTest {
 
         val result = pokerUserCase.validateThreeCardsEquals(hand, WinningResult.builder().build());
         assertEquals(winningResult, result);
+    }
+
+    @Test
+    void validateFlush(){
+        hand = "2H 3H 5H 5H 3H";
+
+        val winningResult = WinningResult.builder()
+                .valueFlush("2H 3H 5H 5H 3H")
+               .flush(Boolean.TRUE)
+               .build();
+
+        val result = pokerUserCase.validateFlush(hand, WinningResult.builder().build());
+        assertEquals(winningResult, result);
+    }
+
+    @Test
+    void validateFourCardsEquals(){
+        hand = "3H 3H 3S 5C 3D";
+
+        val winningResult = WinningResult.builder()
+                .valueFourOfAKind("3")
+                .fourOfAKind(Boolean.TRUE)
+                .build();
+
+        val result = pokerUserCase.validateFourCardsEquals(hand, WinningResult.builder().build());
+        assertEquals(winningResult, result);
+    }
+
+    @Test
+    void validateFullHouse(){
+        hand = "3H 3H 3S 5C 5D";
+
+        val winningResult = WinningResult.builder()
+                .valueFullHouse("3 5")
+                .fullHouse(Boolean.TRUE)
+                .build();
+
+        val result = pokerUserCase.validateFullHouse(hand, WinningResult.builder().build());
+        assertEquals(winningResult, result);
+
+    }
+
+    @Test
+    void validateStraight(){
+        hand = "2H 3H 4S 5C 6D";
+
+        val winningResult = WinningResult.builder()
+                .valueStraight("2H 3H 4S 5C 6D")
+                .straight(Boolean.TRUE)
+                .build();
+
+        val result = pokerUserCase.validateStraight(hand, WinningResult.builder().build());
+        assertEquals(winningResult, result);
+
     }
 }
