@@ -1,107 +1,108 @@
-# PokerTexasHolderOnboardTest
+# Texas Hold'em Poker Hand Validator🎰
 
-# Ejercicio Texas Holdem
+---
+## Descripción del Proyecto
 
-El ejercicio consiste en crear un webservice que resuelva el problema segun las instrucciones dadas.
+Este proyecto implementa un validador de manos de póker para el juego Texas Hold'em. Está construido utilizando el framework Spring Boot y sigue una arquitectura basada en controladores y casos de uso. El objetivo principal del proyecto es recibir dos manos de cartas, validarlas, evaluarlas y determinar cuál de ellas es la ganadora, según las reglas del póker.
 
-## Descripción del problema
-Tu trabajo es comparar pares de manos de póquer e indicar cuál es el ganador, con que tipo de mano ganó y cuáles fueron las cartas que lo hicieron ganar.
+---
+## Componentes Principales
 
-Ejemplos:
+1. **Controlador (`PokerController`)**:
+- Expone un endpoint REST (`/poker/validation`) que recibe una solicitud POST con dos manos de cartas.
+- Utiliza el caso de uso (`PokerUserCase`) para procesar las manos y devuelve la mano ganadora junto con el tipo de mano
 
-Ganó la primera mano, con carta más alta, la carta fue el As .
-Ganó la segunda mano, con par, la carta fue el rey.
+1. DTOs (`PokerHandRequest` y `PokerHandResponse`)
+- `PokerHandRequest`:  Representa la solicitud que contiene dos manos de cartas, ambas validadas para asegurar que no estén vacías.
+- `PokerHandResponse`: Contiene la respuesta con la mano ganadora, el tipo de mano ganadora (por ejemplo, FullHouse, Flush), y la composición de la mano ganadora.
 
-Nota: el texto solo es explicativo, debe entregar el resultado en un objeto que se evalúa al correr los test.
+1. **Enums (`NameCard`, `NameSuit`, `WinEnum`)**:
+- Estos enumerados representan los nombres y valores de las cartas (A, K, Q, J), los palos (Heart, Diamond, Sword, Cane), y los tipos de combinaciones ganadoras (`HighCard`, `Pair`, `FullHouse`, etc.).
 
-Debe tener en cuenta que solo debe implementar 5 de los 10 tipos de manos pero en el orden normal, por ejemplo: Escalera real, Escalera de color, Poker, Full House y Color
+1. **Lógica de Negocio (`PokerUserCase`)**:
+- Valida que las manos cumplan con un formato específico.
+- Evalúa las manos para identificar combinaciones como pares, tríos, escaleras, flushes, y más.
+- Determina la mano ganadora basándose en el valor de la combinación obtenida.
+- La validación incluye determinar la carta más alta, identificar pares o tríos, y reconocer manos especiales como full house o flush.
 
-## Descripción de las reglas de poker
+1. **Modelo de Resultado (`WinningResult`)**:
+- Esta clase encapsula los resultados de la evaluación de una mano, como si tiene una carta alta, un par, un full house, y el valor numérico asociado a esa combinación.
 
-Una baraja de póquer contiene 52 cartas; cada carta tiene un palo que es uno de los tréboles, diamantes, corazones o espadas (indicados con C , D, H y S respectivamente). Cada tarjeta también tiene un valor que es uno de 2, 3, 4, 5, 6, 7, 8, 9, 10, jota, reina, rey, as (denotado 2, 3, 4, 5, 6, 7, 8 , 9, 10, J, Q, K, A). Para fines de puntuación, los trajes no están ordenados, mientras que los valores se ordenan como se indicó anteriormente, siendo 2 el valor más bajo y el más alto el as.
+---
 
-Una mano de poker consiste en 5 cartas repartidas desde el mazo. Las manos de póquer se clasifican según el siguiente orden parcial de menor a mayor.
+## Flujo del Proceso
 
-- Carta alta: Las manos que no encajan en ninguna categoría superior se clasifican según el valor de su carta más alta. Si las cartas más altas tienen el mismo valor, las manos se clasifican por la siguiente más alta, y así sucesivamente.
+1. **Recepción de Datos**: El controlador recibe un `PokerHandRequest` que contiene dos manos de cartas.
+2. **Validación y Evaluación**: Las manos son validadas y evaluadas por el caso de uso `PokerUserCase`.
+3. Determinación del Ganador: Basándose en las reglas del póker, se determina la mano ganadora, y se construye una respuesta con los detalles de la mano ganadora.
+4. **Respuesta**: Se retorna un `PokerHandResponse` con la información de la mano ganadora.
 
-- Par: 2 de las 5 cartas en la mano tienen el mismo valor. Las manos que contienen un par se clasifican según el valor de las cartas que forman el par. Si estos valores son los mismos, las manos se clasifican según los valores de las cartas que no forman el par, en orden decreciente.
-- Dos pares: La mano contiene 2 pares diferentes. Las manos que contienen 2 pares se clasifican por el valor de su par más alto. Las manos con el mismo par más alto se clasifican según el valor de su otro par. Si estos valores son los mismos, las manos se clasifican según el valor de la carta restante.
-- Tres de una clase: Tres de las cartas en la mano tienen el mismo valor. Las manos que contienen tres de una clase se clasifican según el valor de las 3 cartas.
-- Escalera: La mano contiene 5 cartas con valores consecutivos. Las manos que contienen una recta se clasifican por su carta más alta.
-- Color: Mano contiene 5 cartas del mismo palo. Las manos que son ambos enrojecimientos se clasifican según las reglas de Carta alta.
-- Full House: 3 cartas del mismo valor, con las 2 cartas restantes formando un par. Clasificado por el valor de las 3 cartas.
-- Poker: 4 cartas con el mismo valor. Clasificado por el valor de las 4 cartas.
-- Escalera de color: 5 cartas del mismo palo con valores consecutivos. Clasificado por la carta más alta de la mano.
-- Escalera real: Cinco cartas del mismo palo del 10 al as.
+---
 
-## Instrucciones
+## Despliegue
 
-Debe crear una cuenta en github y un repositorio público con el contenido de este proyecto (no un fork), una vez creado debe enviarnos la dirección del repo.
+La aplicación está desplegada en AWS y puedes acceder al endpoint para la validación de manos de póker aquí: 
 
-Puede usar cualquier lenguaje de programacion y cualquier framework que desee, lo importante es que el webservice tenga la estructura dada y que pase los test que se encuentran adjuntos a la coleccion de postman.
+ [http://poker-test-env.eba-aqwpymdt.us-east-.elasticbeanstalk.com/poker/validation](http://poker-test-env.eba-aqwpymdt.us-east-2.elasticbeanstalk.com/poker/validation).
 
-Estructura de la consulta:
+---
 
-```JSON
+## Uso de la aplicación
+
+Este es el curl de postman con el que puedes probar la funcionalidad de la aplicacion
+
+```java
+curl --location 'http://poker-test-env.eba-aqwpymdt.us-east-2.elasticbeanstalk.com/poker/validation' \
+--header 'Content-Type: application/json' \
+--data '{
+    "hand1": "2H 3D 5S 9C KD",
+    "hand2": "2C 3H 4S 8C AH"
+}'
+```
+
+En el body de este request esta recibiendo un objeto JSON que se compone de dos atributos “hand1” y “hand2” estos dos atributos son las cartas que se le entregara a la mano uno y a la mano dos para hacer sus respectivas validaciones y determinar cual es el ganador.
+
+Este seria un ejemplo de respuesta:
+
+```java
 {
-  "hand1": {
-    "type": "string"
-  },
-  "hand2": {
-    "type": "string"
-  }
+    "winnerHand": "hand2",
+    "winnerHandType": "HighCard",
+    "compositionWinnerHand": [
+        "As"
+    ]
 }
 ```
 
-Estructura de la respuesta
+---
 
-```JSON
+## Arquitectura
 
-{
+La aplicación TexasHoldem está estructurada de la siguiente manera:
 
-  "winnerHand": {
-    "type": "string"
-  },
-  "winnerHandType": {
-    "type": "string"
-  },
-  "compositionWinnerHand": {
-    "type": "array"
-  }
-}
-```
-
-El resultado de la evaluación de las manos de poker debe ser un objeto que contenga cual de las manos fue la ganadora, con que tipo de mano y cuáles fueron las cartas con las que ganó, dicho resultado se debe evaluar mediante test unitarios, no se solicita ni se evalúa interfaz gráfica, solo el informe de los test unitarios.
-
-Los valores para los tests ya fueron descritos en los test de la coleccion, debe crear las clases que representan las entidades del dominio (ejemplo: Carta, Mano, etc) y los métodos para evaluar el problema según se indicó anteriormente.
-
-Debe implementar solo 5 de las 10 validaciones, debe indicar cuáles de las 5 seleccione.
-
-También debe implementar los test con los casos mencionados en la descripción según las validaciones que escoja, ya que se evaluará que el test pase.
-
-Debe publicar el servicio en un [Paas](https://en.wikipedia.org/wiki/Platform_as_a_service) que este vinculado con el repositorio del ejercicio resuelto (algo parecido al flujo de trabajo de heroku, por ejemplo puede usar [RailWay](https://railway.app/) o cualquier otro servicio que sea parecido).
-
-## Entregable
-
-Url de repositorio publico con la solucion del proyecto.
-
-Url del servicio web funcionando en una plataforma que este vinculado al repositorio.
-
-## Se evaluará:
-
-- Que los webservices funcionen
-
-- Que los webservices pasen los test asociados a los casos que seleccionó.
-
-- Estilo de codificación.
-
-- Diseño de los módulos y las clases.
-
-- Lógica de la implementación.
-
-- Se da un plus si crea test unitarios en el proyecto.
-
-- Se da un plus si implementa más de las 5 validaciones, pero solo si funcionan todas las que implemente.
-
-- Utilizacion de git, como creación de nuevas ramas, utilizar estándar en los mensajes de commit
-
+1. Paquete Principal **(com.poker.TexasHoldem)**:
+    1. controller:
+        1. `PokerController`: Controlador principal de la aplicación que maneja las solicitudes HTTP y delega las tareas apropiadas a los servicios correspondientes.
+    2. dto (Data Transfer Objects):
+        1. request:
+            1. `PokerHandRequest`: Clase que representa las solicitudes que contienen las manos de póker enviadas al servidor.
+        2. response:
+            1. `PokerHandResponse`: Clase que representa las respuestas que contienen los resultados de la validación de las manos de póker.
+    3. model:
+        1. enums:
+            1. `NameCard`: Enum que representa los nombres de las cartas.
+            2. `NameSuit`: Enum que representa los palos de las cartas.
+            3. `WinEnum`: Enum que representa los diferentes resultados posibles de una mano ganadora.
+        2. winning:
+            1. `WinningResult`: Clase que encapsula la lógica y los resultados de las manos ganadoras.
+    4. usecase:
+        1. `PokerUseCase`: Clase que contiene la lógica de negocio de la aplicación, manejando las reglas del juego y la validación de las manos de póker.
+    5. `TexasHoldemApplication`: Clase principal que inicializa y arranca la aplicación Spring Boot.
+    
+2. resources:
+    1. `application.properties`: Archivo de propiedades de configuración para la aplicación Spring Boot, donde se definen configuraciones como la base de datos, puertos y otros parámetros de la aplicación.
+       
+3. test (com.poker.TexasHoldem):
+    1. usecase:
+        1. `PokerUseCaseTest`: Clase de prueba unitaria que contiene pruebas para verificar el comportamiento de la lógica de negocio en `PokerUseCase`.
+        2. `TexasHoldemApplicationTests`: Clase de prueba que verifica el correcto arranque y configuración de la aplicación Spring Boot.
