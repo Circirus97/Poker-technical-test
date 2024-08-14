@@ -1,6 +1,8 @@
 C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\controller\PokerController.java
 C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\dto\request\PokerHandRequest.java
 C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\dto\response\PokerHandResponse.java
+C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\model\enums\NameCard.java
+C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\model\enums\NameSuit.java
 C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\model\enums\WinEnum.java
 C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\model\winning\WinningResult.java
 C:\Users\Alejandra\Desktop\Poker-technical-test\TexasHoldem\src\main\java\com\poker\TexasHoldem\TexasHoldemApplication.java

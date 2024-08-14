@@ -1,10 +1,12 @@
-com\poker\TexasHoldem\dto\response\PokerHandResponse.class
 com\poker\TexasHoldem\dto\request\PokerHandRequest$PokerHandRequestBuilder.class
-com\poker\TexasHoldem\model\winning\WinningResult.class
-com\poker\TexasHoldem\dto\request\PokerHandRequest.class
 com\poker\TexasHoldem\controller\PokerController.class
 com\poker\TexasHoldem\model\winning\WinningResult$WinningResultBuilder.class
 com\poker\TexasHoldem\usecase\PokerUserCase.class
 com\poker\TexasHoldem\dto\response\PokerHandResponse$PokerHandResponseBuilder.class
-com\poker\TexasHoldem\TexasHoldemApplication.class
+com\poker\TexasHoldem\model\enums\NameSuit.class
 com\poker\TexasHoldem\model\enums\WinEnum.class
+com\poker\TexasHoldem\model\enums\NameCard.class
+com\poker\TexasHoldem\dto\response\PokerHandResponse.class
+com\poker\TexasHoldem\model\winning\WinningResult.class
+com\poker\TexasHoldem\dto\request\PokerHandRequest.class
+com\poker\TexasHoldem\TexasHoldemApplication.class

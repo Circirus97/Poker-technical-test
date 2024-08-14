@@ -2,6 +2,8 @@ package com.poker.TexasHoldem.usecase;
 
 import com.poker.TexasHoldem.dto.request.PokerHandRequest;
 import com.poker.TexasHoldem.dto.response.PokerHandResponse;
+import com.poker.TexasHoldem.model.enums.NameCard;
+import com.poker.TexasHoldem.model.enums.NameSuit;
 import com.poker.TexasHoldem.model.enums.WinEnum;
 import com.poker.TexasHoldem.model.winning.WinningResult;
 import org.apache.coyote.BadRequestException;
@@ -54,21 +56,44 @@ public class PokerUserCase {
 
     private PokerHandResponse determineWinner(WinningResult handOneResult, WinningResult handTwoResult, PokerHandRequest request) {
         return handOneResult.getValueWinning() > handTwoResult.getValueWinning() ?
-                buildResponse(HAND_ONE, handOneResult, request.getHand1()) :
-                buildResponse(HAND_TWO, handTwoResult, request.getHand2());
+                buildResponse(HAND_ONE, handOneResult) :
+                buildResponse(HAND_TWO, handTwoResult);
     }
 
-    private PokerHandResponse buildResponse(String winnerHand, WinningResult winningResult, String hand) {
+    private PokerHandResponse buildResponse(String winnerHand, WinningResult winningResult) {
         return PokerHandResponse.builder()
                 .winnerHand(winnerHand)
                 .winnerHandType(handValidationEnum(winningResult).getName())
-                .compositionWinnerHand(separateCards(hand))
+                .compositionWinnerHand(validateSuitOrNameCard(winningResult))
                 .build();
+    }
+
+    private List<String> validateSuitOrNameCard(WinningResult winningResult){
+
+        return winningResult.getValueWinning() == 6 ?
+              List.of(NameSuit.fromSuit(extractSuit(separateCards(winningResult.getValueFlush())
+                      .getFirst())).orElse(Strings.EMPTY))
+                : compositionWinnerHand(handValidationValueWinning(winningResult));
+    }
+
+    public List<String> compositionWinnerHand(String hand) {
+
+        return separateCards(hand)
+                .stream()
+                .map(this::extractRank)
+                .sorted(Comparator.comparing(this::getCardValue).reversed())
+                .map(rank -> NameCard.fromRank(rank).map(NameCard::getValue).orElse(rank))
+                .toList();
     }
 
     private String extractRank(String card) {
         return card.length() == 3 ? card.substring(0, 2) : card.substring(0, 1);
     }
+
+    private String extractSuit(String card) {
+        return card.length() == 3 ? card.substring(2, 3) : card.substring(1, 2);
+    }
+
 
     private Integer getCardValue(String card) {
         String rank = extractRank(card);
@@ -90,7 +115,7 @@ public class PokerUserCase {
         };
     }
 
-    public int getSuitValue(char suit) {
+    public Integer getSuitValue(char suit) {
         return switch (suit) {
             case 'S' -> 4;
             case 'H' -> 3;
@@ -358,5 +383,21 @@ public class PokerUserCase {
             default -> WinEnum.HIGH_CARD;
         };
     }
+
+    public String handValidationValueWinning(WinningResult winningResult) {
+
+        return switch (winningResult.getValueWinning()) {
+            case 1 -> winningResult.getValueHighCard();
+            case 2 -> winningResult.getValuePair();
+            case 3 -> winningResult.getValueTwoPair();
+            case 4 -> winningResult.getValueThreeOfAKind();
+            case 5 -> winningResult.getValueStraight();
+            case 6 -> winningResult.getValueFlush();
+            case 7 -> winningResult.getValueFullHouse();
+            case 8 -> winningResult.getValueFourOfAKind();
+            default -> winningResult.getValueHighCard();
+        };
+    }
+
 
 }
