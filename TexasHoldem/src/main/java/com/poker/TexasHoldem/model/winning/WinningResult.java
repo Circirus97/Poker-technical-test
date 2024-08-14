@@ -1,4 +1,4 @@
-package com.poker.TexasHoldem.model;
+package com.poker.TexasHoldem.model.winning;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,12 +34,6 @@ public class WinningResult {
 
     private Boolean fourOfAKind;
     private String valueFourOfAKind;
-
-    private Boolean straightFlush;
-    private String valueStraightFlush;
-
-    private Boolean royalFlush;
-    private String valueRoyalFlush;
 
     private Integer valueWinning;
 }

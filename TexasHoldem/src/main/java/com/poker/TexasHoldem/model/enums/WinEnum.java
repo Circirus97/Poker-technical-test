@@ -1,4 +1,4 @@
-package com.poker.TexasHoldem.model;
+package com.poker.TexasHoldem.model.enums;
 
 import lombok.Getter;
 
