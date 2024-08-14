@@ -23,5 +23,4 @@ public class PokerController {
         return pokerCaseUse.createHands(request);
     }
 
-
 }

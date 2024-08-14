@@ -21,6 +21,7 @@ public class PokerUserCase {
     private static final String HAND_REGEX = "^([2-9]|10|A|J|Q|K)[CHSD]( ([2-9]|10|A|J|Q|K)[CHSD]){4}$";
     public static final String HAND_ONE = "hand1";
     public static final String HAND_TWO = "hand2";
+    public static final String INVALID_HANDS_PROVIDED = "Invalid hands provided";
 
     public PokerHandResponse createHands(PokerHandRequest request) throws BadRequestException {
 
@@ -29,13 +30,13 @@ public class PokerUserCase {
         WinningResult winningResultHandOne = evaluateHand(request.getHand1());
         WinningResult winningResultHandTwo = evaluateHand(request.getHand2());
 
-        return determineWinner(winningResultHandOne, winningResultHandTwo, request);
+        return determineWinner(winningResultHandOne, winningResultHandTwo);
     }
 
     private void validateRequest(PokerHandRequest request) throws BadRequestException {
         if (isEmpty(request.getHand1()) || isEmpty(request.getHand2()) ||
                 !validateHand(request.getHand1()) || !validateHand(request.getHand2())) {
-            throw new BadRequestException("Invalid hands provided");
+            throw new BadRequestException(INVALID_HANDS_PROVIDED);
         }
     }
 
@@ -54,10 +55,19 @@ public class PokerUserCase {
         return winningResult;
     }
 
-    private PokerHandResponse determineWinner(WinningResult handOneResult, WinningResult handTwoResult, PokerHandRequest request) {
-        return handOneResult.getValueWinning() > handTwoResult.getValueWinning() ?
+    private PokerHandResponse determineWinner(WinningResult handOneResult, WinningResult handTwoResult) {
+        return handOneResult.getValueWinning() == 1  && handTwoResult.getValueWinning()
+                == 1 ? determineWinnerInCaseOfATieHighestCard(handOneResult, handTwoResult)
+                : handOneResult.getValueWinning() > handTwoResult.getValueWinning() ?
                 buildResponse(HAND_ONE, handOneResult) :
                 buildResponse(HAND_TWO, handTwoResult);
+    }
+
+    private PokerHandResponse determineWinnerInCaseOfATieHighestCard(WinningResult handOneResult, WinningResult handTwoResult) {
+
+        return getCardValue(handOneResult.getValueHighCard()) > getCardValue(handTwoResult.getValueHighCard()) ?
+                buildResponse(HAND_ONE, handOneResult) : buildResponse(HAND_TWO, handTwoResult);
+
     }
 
     private PokerHandResponse buildResponse(String winnerHand, WinningResult winningResult) {
@@ -68,11 +78,11 @@ public class PokerUserCase {
                 .build();
     }
 
-    private List<String> validateSuitOrNameCard(WinningResult winningResult){
+    private List<String> validateSuitOrNameCard(WinningResult winningResult) {
 
         return winningResult.getValueWinning() == 6 ?
-              List.of(NameSuit.fromSuit(extractSuit(separateCards(winningResult.getValueFlush())
-                      .getFirst())).orElse(Strings.EMPTY))
+                List.of(NameSuit.fromSuit(extractSuit(separateCards(winningResult.getValueFlush())
+                        .getFirst())).orElse(Strings.EMPTY))
                 : compositionWinnerHand(handValidationValueWinning(winningResult));
     }
 
@@ -131,6 +141,12 @@ public class PokerUserCase {
         return new ArrayList<>(Arrays.asList(cards));
     }
 
+    /*
+    ----------------------------
+      COUNTS HOW MANY TIMES A LETTER APPEARS
+    ----------------------------
+     */
+
     private void countAppearancesOfEachRank(List<String> cards, Map<String, Integer> rankCount) {
         for (String card : cards) {
             String rank = extractRank(card);
@@ -143,7 +159,6 @@ public class PokerUserCase {
       HIGH CARD
     ----------------------------
      */
-
 
     public WinningResult validateHighestCard(String hand) {
 
@@ -290,7 +305,6 @@ public class PokerUserCase {
     public WinningResult validateFlush(String hand, WinningResult winningResult) {
         List<String> cards = separateCards(hand);
         Map<Character, Integer> suitCount = new HashMap<>();
-
 
         for (String card : cards) {
             char suit = card.charAt(card.length() - 1);
