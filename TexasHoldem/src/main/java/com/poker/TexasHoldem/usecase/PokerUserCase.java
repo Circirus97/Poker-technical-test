@@ -2,9 +2,9 @@ package com.poker.TexasHoldem.usecase;
 
 import com.poker.TexasHoldem.dto.request.PokerHandRequest;
 import com.poker.TexasHoldem.dto.response.PokerHandResponse;
-import com.poker.TexasHoldem.model.WinEnum;
-import com.poker.TexasHoldem.model.WinningResult;
-import lombok.val;
+import com.poker.TexasHoldem.model.enums.WinEnum;
+import com.poker.TexasHoldem.model.winning.WinningResult;
+import org.apache.coyote.BadRequestException;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
@@ -20,46 +20,20 @@ public class PokerUserCase {
     public static final String HAND_ONE = "hand1";
     public static final String HAND_TWO = "hand2";
 
-    public PokerHandResponse createHands(PokerHandRequest request) {
+    public PokerHandResponse createHands(PokerHandRequest request) throws BadRequestException {
 
-        if (isEmpty(request.getHand1()) || isEmpty(request.getHand2()) ||!validateHand(request.getHand1()) ||!validateHand(request.getHand2())) {
-            throw new IllegalArgumentException("Invalid hands provided");
-        }
+        validateRequest(request);
 
-        var winningResultHandOne = validateHighestCard(request.getHand1());
-        var winningResultHandTwo = validateHighestCard(request.getHand2());
+        WinningResult winningResultHandOne = evaluateHand(request.getHand1());
+        WinningResult winningResultHandTwo = evaluateHand(request.getHand2());
 
-        winningResultHandOne = validatePairOrTwoPair(request.getHand1(), winningResultHandOne);
-        winningResultHandTwo = validatePairOrTwoPair(request.getHand2(), winningResultHandTwo);
+        return determineWinner(winningResultHandOne, winningResultHandTwo, request);
+    }
 
-        winningResultHandOne = validateThreeCardsEquals(request.getHand1(), winningResultHandOne);
-        winningResultHandTwo = validateThreeCardsEquals(request.getHand2(), winningResultHandTwo);
-
-        winningResultHandOne = validateStraight(request.getHand1(), winningResultHandOne);
-        winningResultHandTwo = validateStraight(request.getHand2(), winningResultHandTwo);
-
-        winningResultHandOne = validateFlush(request.getHand1(), winningResultHandOne);
-        winningResultHandTwo = validateFlush(request.getHand2(), winningResultHandTwo);
-
-        winningResultHandOne = validateFullHouse(request.getHand1(), winningResultHandOne);
-        winningResultHandTwo = validateFullHouse(request.getHand2(), winningResultHandTwo);
-
-        winningResultHandOne = validateFourCardsEquals(request.getHand1(), winningResultHandOne);
-        winningResultHandTwo = validateFourCardsEquals(request.getHand2(), winningResultHandTwo);
-
-        if (winningResultHandOne.getValueWinning() > winningResultHandTwo.getValueWinning()) {
-
-            return PokerHandResponse.builder()
-                    .winnerHand(HAND_ONE)
-                    .winnerHandType(handValidationEnum(winningResultHandOne).getName())
-                    .compositionWinnerHand(separateCards(request.getHand1()))
-                    .build();
-        }else {
-            return PokerHandResponse.builder()
-                   .winnerHand(HAND_TWO)
-                   .winnerHandType(handValidationEnum(winningResultHandTwo).getName())
-                   .compositionWinnerHand(separateCards(request.getHand2()))
-                   .build();
+    private void validateRequest(PokerHandRequest request) throws BadRequestException {
+        if (isEmpty(request.getHand1()) || isEmpty(request.getHand2()) ||
+                !validateHand(request.getHand1()) || !validateHand(request.getHand2())) {
+            throw new BadRequestException("Invalid hands provided");
         }
     }
 
@@ -67,12 +41,33 @@ public class PokerUserCase {
         return Pattern.matches(HAND_REGEX, hand);
     }
 
-    private String extractRank(String card) {
-        return card.length() == 3 ? card.substring(0, 2) : card.substring(0, 1);
+    private WinningResult evaluateHand(String hand) {
+        WinningResult winningResult = validateHighestCard(hand);
+        winningResult = validatePairOrTwoPair(hand, winningResult);
+        winningResult = validateThreeCardsEquals(hand, winningResult);
+        winningResult = validateStraight(hand, winningResult);
+        winningResult = validateFlush(hand, winningResult);
+        winningResult = validateFullHouse(hand, winningResult);
+        winningResult = validateFourCardsEquals(hand, winningResult);
+        return winningResult;
     }
 
-    private char extractSuit(String card) {
-        return card.charAt(card.length() - 1);
+    private PokerHandResponse determineWinner(WinningResult handOneResult, WinningResult handTwoResult, PokerHandRequest request) {
+        return handOneResult.getValueWinning() > handTwoResult.getValueWinning() ?
+                buildResponse(HAND_ONE, handOneResult, request.getHand1()) :
+                buildResponse(HAND_TWO, handTwoResult, request.getHand2());
+    }
+
+    private PokerHandResponse buildResponse(String winnerHand, WinningResult winningResult, String hand) {
+        return PokerHandResponse.builder()
+                .winnerHand(winnerHand)
+                .winnerHandType(handValidationEnum(winningResult).getName())
+                .compositionWinnerHand(separateCards(hand))
+                .build();
+    }
+
+    private String extractRank(String card) {
+        return card.length() == 3 ? card.substring(0, 2) : card.substring(0, 1);
     }
 
     private Integer getCardValue(String card) {
@@ -105,30 +100,24 @@ public class PokerUserCase {
         };
     }
 
-     /*
-    ----------------------------
-      HIGH CARD
-    ----------------------------
-     */
-
-    public String winnerHighCard(String handOne, String handTwo) {
-
-        val highestCardHandOne = validateHighestCard(handOne);
-        val highestCardHandTwo = validateHighestCard(handTwo);
-
-        if (getCardValue(highestCardHandOne.getValueHighCard()) > getCardValue(highestCardHandTwo.getValueHighCard())) {
-            return HAND_ONE;
-        } else {
-            return HAND_TWO;
-        }
-    }
-
-
     public List<String> separateCards(String hand) {
         String[] cards = hand.split(" ");
 
         return new ArrayList<>(Arrays.asList(cards));
     }
+
+    private void countAppearancesOfEachRank(List<String> cards, Map<String, Integer> rankCount) {
+        for (String card : cards) {
+            String rank = extractRank(card);
+            rankCount.put(rank, rankCount.getOrDefault(rank, 0) + 1);
+        }
+    }
+
+     /*
+    ----------------------------
+      HIGH CARD
+    ----------------------------
+     */
 
 
     public WinningResult validateHighestCard(String hand) {
@@ -170,10 +159,8 @@ public class PokerUserCase {
         String pair = Strings.EMPTY;
         String twoPair = Strings.EMPTY;
 
-        // Contar las apariciones de cada rango
         countAppearancesOfEachRank(cards, rankCount);
 
-        // Identificar pares
         for (String card : cards.stream().map(s -> s.length() == 3 ? s.substring(0, 2) : s.substring(0, 1)).distinct().toList()) {
             String rank = extractRank(card);
             if (rankCount.get(rank) == 2) {
@@ -181,21 +168,21 @@ public class PokerUserCase {
                     pair = card;
                 } else if (!twoPair.equals(card)) {
                     twoPair = card;
-                    break; // Para de buscar si se encuentra un segundo par
+                    break;
                 }
             }
         }
 
-        return !isEmpty(pair) ?
+        return !isEmpty(twoPair) ?
+                winningResult.toBuilder()
+                        .twoPair(Boolean.TRUE)
+                        .valueTwoPair(String.format("%s %s", twoPair, pair))
+                        .valueWinning(3)
+                        .build() : !isEmpty(pair) ?
                 winningResult.toBuilder()
                         .pair(Boolean.TRUE)
                         .valuePair(pair)
                         .valueWinning(2)
-                        .build() : !isEmpty(twoPair) ?
-                winningResult.toBuilder()
-                        .twoPair(Boolean.TRUE)
-                        .valueTwoPair(twoPair)
-                        .valueWinning(3)
                         .build() : winningResult;
     }
 
@@ -210,10 +197,8 @@ public class PokerUserCase {
         List<String> cards = separateCards(hand);
         Map<String, Integer> rankCount = new HashMap<>();
 
-        // Contar las apariciones de cada rango
         countAppearancesOfEachRank(cards, rankCount);
 
-        // Verificar si hay 3 cartas con el mismo rango y devolver el rango
         for (Map.Entry<String, Integer> entry : rankCount.entrySet()) {
             if (entry.getValue() == 3) {
                 return winningResult.toBuilder()
@@ -226,13 +211,6 @@ public class PokerUserCase {
         return winningResult;
     }
 
-    private void countAppearancesOfEachRank(List<String> cards, Map<String, Integer> rankCount) {
-        for (String card : cards) {
-            String rank = extractRank(card);
-            rankCount.put(rank, rankCount.getOrDefault(rank, 0) + 1);
-        }
-    }
-
     /*
     ----------------------------
       STRAIGHT
@@ -240,17 +218,15 @@ public class PokerUserCase {
      */
 
     public WinningResult validateStraight(String hand, WinningResult winningResult) {
-        // Separar las cartas de la mano
+
         List<String> cards = separateCards(hand);
 
-        // Obtener los valores numéricos de las cartas
         List<Integer> cardValues = cards.stream()
                 .map(card -> getCardValue(extractRank(card)))
-                .distinct()  // Eliminar duplicados
-                .sorted()    // Ordenar de menor a mayor
+                .distinct()
+                .sorted()
                 .toList();
 
-        // Verificar si hay al menos 5 cartas consecutivas
         for (int i = 0; i <= cardValues.size() - 5; i++) {
             boolean isStraight = true;
             for (int j = 0; j < 4; j++) {
@@ -268,7 +244,6 @@ public class PokerUserCase {
             }
         }
 
-        // Caso especial: A-2-3-4-5 también es un Straight (considerando que A es 14)
         if (cardValues.contains(14) && cardValues.get(0) == 2 && cardValues.get(1) == 3
                 && cardValues.get(2) == 4 && cardValues.get(3) == 5) {
             return winningResult.toBuilder()
@@ -278,11 +253,8 @@ public class PokerUserCase {
                     .build();
         }
 
-        // Si no se encontró ninguna secuencia de 5 cartas, no hay Straight
         return winningResult;
     }
-
-
 
     /*
     ----------------------------
@@ -294,13 +266,12 @@ public class PokerUserCase {
         List<String> cards = separateCards(hand);
         Map<Character, Integer> suitCount = new HashMap<>();
 
-        // Contar las cartas por palo
+
         for (String card : cards) {
             char suit = card.charAt(card.length() - 1);
             suitCount.put(suit, suitCount.getOrDefault(suit, 0) + 1);
         }
 
-        // Verificar si hay 5 cartas del mismo palo
         return suitCount.values().stream().allMatch(i -> i == 5)
                 ? winningResult.toBuilder()
                 .flush(Boolean.TRUE)
@@ -343,7 +314,6 @@ public class PokerUserCase {
         return winningResult;
     }
 
-
     /*
     ----------------------------
       FOUR OF A KIND (POKER)
@@ -370,18 +340,6 @@ public class PokerUserCase {
 
     /*
     ----------------------------
-      STRAIGHT FLUSH
-    ----------------------------
-     */
-
-    /*
-    ----------------------------
-      ROYAL FLUSH
-    ----------------------------
-     */
-
-    /*
-    ----------------------------
      VALIDATE THE WINNING HAND
     ----------------------------
      */
@@ -399,8 +357,6 @@ public class PokerUserCase {
             case 8 -> WinEnum.FOUR_OF_A_KIND;
             default -> WinEnum.HIGH_CARD;
         };
-
     }
-
 
 }
