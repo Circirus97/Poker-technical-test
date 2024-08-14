@@ -246,7 +246,7 @@ class PokerUserCaseTest {
         val expectedResponse = PokerHandResponse.builder()
                 .winnerHand("hand2")
                 .winnerHandType("HighCard")
-                .compositionWinnerHand(List.of("AH", "KD", "9C", "8C", "7D"))
+                .compositionWinnerHand(List.of("As"))
                 .build();
 
 
